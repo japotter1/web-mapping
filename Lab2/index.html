@@ -37,7 +37,7 @@
                     var prop = feature.properties;
                     var popup = '<h3>'+prop['Location']+'</h3>'+'<b>Cases Day 1:</b> '+prop['1']+'<br><b>Cases Day 16:</b> '+prop['covid'];
                     feature.layer = layer;
-                    layer.bindPopup(popup, {maxWidth: "auto"});
+                    layer.bindPopup(popup, {maxWidth: 150});
                 }
             };
 
