@@ -122,7 +122,7 @@
                     name.innerHTML = props.name;
                     container.appendChild(L.DomUtil.create('br', null, container));
 
-                    var cat = props.name ? props.FNAME : props.OCCUPATION,
+                    var cat = props.name ? props.name : props.name,
                         info = cat;
                     container.appendChild(document.createTextNode(info));
                 }
@@ -164,11 +164,11 @@
             };
 
             var overlays = {
-                "People": firstlayer
+                "Showing Locations": firstlayer
             };
 
             var baseMaps = {
-                "Historic": basemap
+                "Basemap": basemap
             };
 
             L.control.layers(overlays, baseMaps, {collapsed:false}).addTo(map);
