@@ -7,25 +7,23 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css"integrity="sha384-o/2yZuJZWGJ4s/adjxVW71R+EO/LyCwdQfP5UWSgX/w87iiTXuvDZaejd3TsN7mf"crossorigin=""/>
         <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"integrity="sha384-okbbMvvx/qfQkmiQKfd5VifbKZ/W8p1qIsWvE1ROPUfHWsDcC8/BnHohF7vPg2T6"crossorigin=""></script>
-        <script src="bus.js"></script>
+        <script src="https://japotter1.github.io/web-mapping/Final/vector_layers/buildings.js"></script>
+        <script src="https://japotter1.github.io/web-mapping/Final/vector_layers/landuse.js"></script>
+        <script src="https://japotter1.github.io/web-mapping/Final/vector_layers/rivers.js"></script>
+        <script src="https://japotter1.github.io/web-mapping/Final/vector_layers/roads.js"></script>
+        <script src="https://japotter1.github.io/web-mapping/Final/vector_layers/stations.js"></script>
+        <script src="https://japotter1.github.io/web-mapping/Final/vector_layers/transit_lines.js"></script>
         <style type="text/css">body {margin: 0;padding: 0;} html, body, #map{width: 100%;height: 100%;}</style>
     </head>
     <body>
         <div id="map"></div>
         <script>
 
-        var onEachFeature = function(feature, layer) {
-            if (feature.properties) {
-                var prop = feature.properties;
-                var popup = prop['description'];
-                feature.layer = layer;
-                layer.bindPopup(popup, {maxWidth: 300});
-            }
-        };
-
+        // MAP
         var map = L.map('map', {attributionControl: false}).setView([-4.327, -42.7703], 14);
         L.control.attribution({prefix: false}).addTo(map);
 
+        // TILES
         var base_tiles = L.tileLayer('https://japotter1.github.io/web-mapping/Final/base_tiles/{z}/{x}/{y}.png', {minZoom: 12, maxZoom: 18, tms: false, attribution: 'Created by QGIS'}).addTo(map);
         var transit_tiles = L.tileLayer('https://japotter1.github.io/web-mapping/Final/transit_tiles/{z}/{x}/{y}.png', {minZoom: 12, maxZoom: 18, tms: false, attribution: 'Created by QGIS'});
 
@@ -36,21 +34,39 @@
 
         L.control.layers(basemaps).addTo(map);
 
-        // var bus = new L.geoJson(bus, {
-        //     onEachFeature: onEachFeature,
-        //     pointToLayer: function(feature, ll){
-        //         return L.circleMarker(ll, {
-        //             color: '#000000',
-        //             opacity: 1,
-        //             weight: 2,
-        //             fillColor: '#772222',
-        //             fillOpacity: 0.5,
-        //             radius: 3
-        //         });
-        //     }
-        // }).addTo(map);
+        // FEATURES
+        function getLineType(type) {
+            switch (type) {
+                case "CR_E": return "Commuter Rail - Express/Transfer";
+                case "CR_L": return "Commuter Rail - Local";
+                case "Metro_E": return "Metro - Express/Transfer";
+                case "Metro_L": return "Metro - Local";
+                default: return type;
+            }
+        }
 
-        // var tilesource_layer = L.tileLayer('https://japotter1.github.io/web-mapping/Lab3/{z}/{x}/{y}.png', {minZoom: 13, maxZoom: 17, tms: false, attribution: 'Created by QGIS'}).addTo(map);
+        var station_popups = function(feature, layer) {
+            if (feature.properties) {
+                var prop = feature.properties;
+                var popup = '<h3>'+prop['Name']+'</h3><b>Type: </b>'+getLineType(prop['Type'])+'<br><b>Serves: </b>'+prop['Serves']; // '<h3>'+prop['Location']+'</h3>'+'<b>Cases Day 1:</b> '+prop['1']+'<br><b>Cases Day 16:</b> '+prop['covid'];
+                feature.layer = layer;
+                layer.bindPopup(popup, {maxWidth: 300});
+            }
+        };
+
+        var stations = new L.geoJson(stations, {
+            onEachFeature: station_popups,
+            pointToLayer: function(feature, ll){
+                return L.circleMarker(ll, {
+                    color: '#FFFFFF',
+                    opacity: 0,
+                    weight: 2,
+                    fillColor: '#FFFFFF',
+                    fillOpacity: 0,
+                    radius: 3
+                });
+            }
+        }).addTo(map);
 
         </script>
     </body>
