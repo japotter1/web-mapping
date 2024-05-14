@@ -7,6 +7,17 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css"integrity="sha384-o/2yZuJZWGJ4s/adjxVW71R+EO/LyCwdQfP5UWSgX/w87iiTXuvDZaejd3TsN7mf"crossorigin=""/>
         <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"integrity="sha384-okbbMvvx/qfQkmiQKfd5VifbKZ/W8p1qIsWvE1ROPUfHWsDcC8/BnHohF7vPg2T6"crossorigin=""></script>
+        
+        <!--SEARCH AND JQUERY-->
+        <script src="https://dsps.lib.uiowa.edu/placing/public/fuse-1.2.1/fuse.min.js"></script>
+        <script src="https://dsps.lib.uiowa.edu/placing/public/leafletFuseSearch-noVersion/leafletfuse.js"></script>
+        <link rel="stylesheet" href="https://dsps.lib.uiowa.edu/placing/public/leafletFuseSearch-noVersion/leafletfuse.css" type="text/css"/>
+        <script src="https://code.jquery.com/jquery-1.9.1.min.js"></script>
+        <script src="https://code.jquery.com/ui/1.9.2/jquery-ui.js"></script>
+        <link rel="stylesheet" href="https://code.jquery.com/ui/1.9.2/themes/base/jquery-ui.css" type="text/css">
+        <script src="https://dsps.lib.uiowa.edu/placing/public/jqueryUiTouchPunch-0.2.2/jquery.ui.touch-punch.min.js"></script>
+
+        <!--DATA-->
         <script src="https://japotter1.github.io/web-mapping/Final/vector_layers/buildings.js"></script>
         <script src="https://japotter1.github.io/web-mapping/Final/vector_layers/landuse.js"></script>
         <script src="https://japotter1.github.io/web-mapping/Final/vector_layers/rivers.js"></script>
@@ -27,20 +38,50 @@
         var base_tiles = L.tileLayer('https://japotter1.github.io/web-mapping/Final/base_tiles/{z}/{x}/{y}.png', {minZoom: 12, maxZoom: 18, tms: false, attribution: 'Created by QGIS'}).addTo(map);
         var transit_tiles = L.tileLayer('https://japotter1.github.io/web-mapping/Final/transit_tiles/{z}/{x}/{y}.png', {minZoom: 12, maxZoom: 18, tms: false, attribution: 'Created by QGIS'});
 
-        var basemaps = {
-            "Roads": base_tiles,
-            "Transit": transit_tiles
+        // FEATURES
+
+        // Roads
+        function getRoadType(type) {
+            switch (type) {
+                case 1: return "Major Highway";
+                case 2: return "Secondary Highway";
+                case 3: return "Major Road";
+                case 4: return "Secondary Road";
+                case 5: return "Local Road";
+                case 6: return "Major Highway Ramp";
+                case 7: return "Secondary Highway Ramp";
+                case 8: return "Major Service Road";
+                case 9: return "Alley/Minor Service";
+                default: return "Other";
+            }
+        }
+
+        var road_popups = function(feature, layer) {
+            if (feature.properties) {
+                var prop = feature.properties;
+                var popup = ((prop['Name'] != null) ? '<h3>'+prop['Name']+'</h3>':'')+((prop['Route'] != null) ? '<b>Route '+prop['Route']+'</b><br>' : '')+'<b>Type: </b>'+getRoadType(prop['Type']);
+                feature.layer = layer;
+                layer.bindPopup(popup, {maxWidth: 300});
+            }
         };
 
-        L.control.layers(basemaps).addTo(map);
+        var roads = new L.geoJson(roads, {
+            onEachFeature: road_popups,
+            style: {
+                    color: '#FFFFFF',
+                    opacity: 0,
+                    weight: 10
+            }
+        }).addTo(map);
 
-        // FEATURES
+        // Stations
         function getLineType(type) {
             switch (type) {
                 case "CR_E": return "Commuter Rail - Express/Transfer";
                 case "CR_L": return "Commuter Rail - Local";
                 case "Metro_E": return "Metro - Express/Transfer";
                 case "Metro_L": return "Metro - Local";
+                case "RR_X": return "Railroad Crossing";
                 default: return type;
             }
         }
@@ -48,7 +89,7 @@
         var station_popups = function(feature, layer) {
             if (feature.properties) {
                 var prop = feature.properties;
-                var popup = '<h3>'+prop['Name']+'</h3><b>Type: </b>'+getLineType(prop['Type'])+'<br><b>Serves: </b>'+prop['Serves']; // '<h3>'+prop['Location']+'</h3>'+'<b>Cases Day 1:</b> '+prop['1']+'<br><b>Cases Day 16:</b> '+prop['covid'];
+                var popup = ((prop['Name'] != null) ? '<h3>'+prop['Name']+'</h3>':'')+'<b>Type: </b>'+getLineType(prop['Type'])+((prop['Serves'] != null) ? '<br><b>Serves: </b>'+prop['Serves'] : '');
                 feature.layer = layer;
                 layer.bindPopup(popup, {maxWidth: 300});
             }
@@ -67,6 +108,15 @@
                 });
             }
         }).addTo(map);
+
+        // LAYER CONTROL
+        var basemaps = {
+            "Roads": base_tiles,
+            "Transit": transit_tiles
+        };
+
+        L.control.layers(basemaps).addTo(map);
+        // How do I make the vector layers that are rendered dependent on which basemap is active?
 
         </script>
     </body>
