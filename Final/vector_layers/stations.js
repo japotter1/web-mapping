@@ -1,8 +1,4 @@
-var stations = {
-"type": "FeatureCollection",
-"name": "stations",
-"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
-"features": [
+var stations = [
 { "type": "Feature", "properties": { "Name": "85 St/Midtown", "Type": "CR_E", "LineCol": "#000090", "Serves": null }, "geometry": { "type": "Point", "coordinates": [ -42.836490999318031, -4.349972625876054 ] } },
 { "type": "Feature", "properties": { "Name": "Kelsbridge Station", "Type": "CR_E", "LineCol": "#000090", "Serves": null }, "geometry": { "type": "Point", "coordinates": [ -42.695051137481158, -4.310243697968317 ] } },
 { "type": "Feature", "properties": { "Name": "Accoresce Circle", "Type": "CR_L", "LineCol": "#000090", "Serves": null }, "geometry": { "type": "Point", "coordinates": [ -42.693721375432304, -4.322859230966781 ] } },
@@ -2072,4 +2068,3 @@ var stations = {
 { "type": "Feature", "properties": { "Name": "35 Ave", "Type": "Bus", "LineCol": null, "Serves": "107" }, "geometry": { "type": "Point", "coordinates": [ -42.645997528983344, -4.343547114639126 ] } },
 { "type": "Feature", "properties": { "Name": "Meilesey Square", "Type": "Bus", "LineCol": null, "Serves": "107" }, "geometry": { "type": "Point", "coordinates": [ -42.634016520349633, -4.342403905489009 ] } }
 ]
-}

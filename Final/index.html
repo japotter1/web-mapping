@@ -226,7 +226,7 @@
         var searchOptions = {
             position: "topleft",
             title: "Search",
-            placeholder: "Example: Main St",
+            placeholder: "Building Name",
             maxResultLength: 10,
             caseSensitive: false,
             showInvisibleFeatures: true,
@@ -245,7 +245,7 @@
 
         var searchControl = L.control.fuseSearch(searchOptions);
         map.addControl(searchControl);
-        searchControl.indexFeatures(roads, ['Name']);
+        searchControl.indexFeatures(buildings, ['Name']);
 
         </script>
     </body>
