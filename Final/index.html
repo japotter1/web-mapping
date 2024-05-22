@@ -222,6 +222,11 @@
         L.control.layers(basemaps).addTo(map);
 
         // SEARCH
+        var buildingsSearch = buildings;
+
+        buildingsSearch.forEach((entry) => {
+            entry.abc = entry.Name + " " + entry.Number + " " + entry.Street;
+        });
 
         var searchOptions = {
             position: "topleft",
@@ -238,7 +243,7 @@
                 container.appendChild(L.DomUtil.create('br', null, container));
 
                 if (props.Number) {
-                    var cat = props.Number + ' ' + props.Street,
+                    var cat = props.Number + ' ' + props.Street + ' ' + props.abc,
                         info = cat;
                     container.appendChild(document.createTextNode(info));
                 }
@@ -247,7 +252,7 @@
 
         var searchControl = L.control.fuseSearch(searchOptions);
         map.addControl(searchControl);
-        searchControl.indexFeatures(buildings, ['Name']);
+        searchControl.indexFeatures(buildingsSearch, ['Name']);
 
         </script>
     </body>
