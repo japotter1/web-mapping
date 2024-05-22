@@ -12,6 +12,8 @@
         <script src="https://dsps.lib.uiowa.edu/placing/public/fuse-1.2.1/fuse.min.js"></script>
         <script src="https://dsps.lib.uiowa.edu/placing/public/leafletFuseSearch-noVersion/leafletfuse.js"></script>
         <link rel="stylesheet" href="https://dsps.lib.uiowa.edu/placing/public/leafletFuseSearch-noVersion/leafletfuse.css" type="text/css"/>
+        <script src="https://code.jquery.com/jquery-1.9.1.min.js"></script>
+        <script src="https://code.jquery.com/ui/1.9.2/jquery-ui.js"></script>
 
         <!--DATA-->
         <script src="https://japotter1.github.io/web-mapping/Final/vector_layers/buildings.js"></script>
@@ -56,7 +58,7 @@
             }
         }
 
-        var landuse = new L.geoJson(landuse, {
+        var landuse_l = new L.geoJson(landuse, {
             onEachFeature: landuse_popups,
             style: {
                     color: '#FFFFFF',
@@ -78,7 +80,7 @@
             }
         }
 
-        var buildings = new L.geoJson(buildings, {
+        var buildings_l = new L.geoJson(buildings, {
             onEachFeature: building_popups,
             style: {
                     color: '#FFFFFF',
@@ -117,7 +119,7 @@
             }
         };
 
-        var roads = new L.geoJson(roads, {
+        var roads_l = new L.geoJson(roads, {
             onEachFeature: road_popups,
             style: {
                     color: '#FFFFFF',
@@ -151,7 +153,7 @@
             }
         }
 
-        var transit_lines = new L.geoJson(transit_lines, {
+        var transit_lines_l = new L.geoJson(transit_lines, {
             onEachFeature: transit_popups,
             style: {
                     color: '#FFFFFF',
@@ -185,7 +187,7 @@
             }
         };
 
-        var stations = new L.geoJson(stations, {
+        var stations_l = new L.geoJson(stations, {
             onEachFeature: station_popups,
             pointToLayer: function(feature, ll){
                 return L.circleMarker(ll, {
@@ -199,6 +201,26 @@
             }
         });
 
+        // LAYER CONTROL
+        var basemaps = {
+            'Roads': base_tiles,
+            'Transit': transit_tiles
+        };
+
+        map.on('baselayerchange', function(event) {
+            if (event.name == 'Roads') {
+                map.addLayer(roads_l);
+                map.removeLayer(transit_lines_l);
+                map.removeLayer(stations_l);
+            } else if (event.name == 'Transit') {
+                map.addLayer(transit_lines_l);
+                map.addLayer(stations_l);
+                map.removeLayer(roads_l);
+            }
+        });
+
+        L.control.layers(basemaps).addTo(map);
+
         // SEARCH
 
         var searchOptions = {
@@ -208,9 +230,9 @@
             maxResultLength: 10,
             caseSensitive: false,
             showInvisibleFeatures: true,
-            threshold: 0.5, // default is .5, will match imperfect results
+            threshold: 0.5,
             showResultFct: function(feature, container) {
-                props = feature.properties;
+                var props = feature.properties;
                 var name = L.DomUtil.create('b', null, container);
                 name.innerHTML = props.Name;
                 container.appendChild(L.DomUtil.create('br', null, container));
@@ -224,26 +246,6 @@
         var searchControl = L.control.fuseSearch(searchOptions);
         map.addControl(searchControl);
         searchControl.indexFeatures(roads, ['Name']);
-
-        // LAYER CONTROL
-        var basemaps = {
-            'Roads': base_tiles,
-            'Transit': transit_tiles
-        };
-
-        map.on('baselayerchange', function(event) {
-            if (event.name == 'Roads') {
-                map.addLayer(roads);
-                map.removeLayer(transit_lines);
-                map.removeLayer(stations);
-            } else if (event.name == 'Transit') {
-                map.addLayer(transit_lines);
-                map.addLayer(stations);
-                map.removeLayer(roads);
-            }
-        });
-
-        L.control.layers(basemaps).addTo(map);
 
         </script>
     </body>
