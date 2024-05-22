@@ -27,7 +27,7 @@
         <script>
 
         // MAP
-        var map = L.map('map', {attributionControl: false}).setView([-4.327, -42.7703], 14);
+        var map = L.map('map', {attributionControl: false}).setView([-4.348, -42.7703], 14);
         L.control.attribution({prefix: false}).addTo(map);
 
         // TILES
@@ -199,6 +199,32 @@
             }
         });
 
+        // SEARCH
+
+        var searchOptions = {
+            position: "topleft",
+            title: "Search",
+            placeholder: "Example: Main St",
+            maxResultLength: 10,
+            caseSensitive: false,
+            showInvisibleFeatures: true,
+            threshold: 0.5, // default is .5, will match imperfect results
+            showResultFct: function(feature, container) {
+                props = feature.properties;
+                var name = L.DomUtil.create('b', null, container);
+                name.innerHTML = props.Name;
+                container.appendChild(L.DomUtil.create('br', null, container));
+
+                var cat = props.Name ? props.Name : props.Name,
+                    info = cat;
+                container.appendChild(document.createTextNode(info));
+            }
+        };
+
+        var searchControl = L.control.fuseSearch(searchOptions);
+        map.addControl(searchControl);
+        searchControl.indexFeatures(roads, ['Name']);
+
         // LAYER CONTROL
         var basemaps = {
             'Roads': base_tiles,
@@ -218,7 +244,6 @@
         });
 
         L.control.layers(basemaps).addTo(map);
-        // How do I make the vector layers that are rendered dependent on which basemap is active?
 
         </script>
     </body>
