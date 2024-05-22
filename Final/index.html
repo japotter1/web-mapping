@@ -237,9 +237,11 @@
                 name.innerHTML = props.Name;
                 container.appendChild(L.DomUtil.create('br', null, container));
 
-                var cat = props.Name ? props.Name : props.Name,
-                    info = cat;
-                container.appendChild(document.createTextNode(info));
+                if (props.Number) {
+                    var cat = props.Number + ' ' + props.Street,
+                        info = cat;
+                    container.appendChild(document.createTextNode(info));
+                }
             }
         };
 
