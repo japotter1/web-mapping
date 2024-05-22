@@ -8,14 +8,10 @@
         <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css"integrity="sha384-o/2yZuJZWGJ4s/adjxVW71R+EO/LyCwdQfP5UWSgX/w87iiTXuvDZaejd3TsN7mf"crossorigin=""/>
         <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"integrity="sha384-okbbMvvx/qfQkmiQKfd5VifbKZ/W8p1qIsWvE1ROPUfHWsDcC8/BnHohF7vPg2T6"crossorigin=""></script>
         
-        <!--SEARCH AND JQUERY-->
+        <!--SEARCH-->
         <script src="https://dsps.lib.uiowa.edu/placing/public/fuse-1.2.1/fuse.min.js"></script>
         <script src="https://dsps.lib.uiowa.edu/placing/public/leafletFuseSearch-noVersion/leafletfuse.js"></script>
         <link rel="stylesheet" href="https://dsps.lib.uiowa.edu/placing/public/leafletFuseSearch-noVersion/leafletfuse.css" type="text/css"/>
-        <script src="https://code.jquery.com/jquery-1.9.1.min.js"></script>
-        <script src="https://code.jquery.com/ui/1.9.2/jquery-ui.js"></script>
-        <link rel="stylesheet" href="https://code.jquery.com/ui/1.9.2/themes/base/jquery-ui.css" type="text/css">
-        <script src="https://dsps.lib.uiowa.edu/placing/public/jqueryUiTouchPunch-0.2.2/jquery.ui.touch-punch.min.js"></script>
 
         <!--DATA-->
         <script src="https://japotter1.github.io/web-mapping/Final/vector_layers/buildings.js"></script>
@@ -40,6 +36,59 @@
 
         // FEATURES
 
+        // Landuse
+        function getLanduseType(type) {
+            switch (type) {
+                case "POI": return "Point of Interest";
+                default: return type;
+            }
+        }
+
+        var landuse_popups = function(feature, layer) {
+            if (feature.properties && feature.properties['Name'] != null) {
+                var prop = feature.properties;
+                var popup = '<h3 style=\"line-height: 0.8\">'+prop['Name']+'</h3><hr>'
+                    + '<b>Type: </b>' + getLanduseType(prop['Type']);
+                feature.layer = layer;
+                layer.bindPopup(popup, {maxWidth: 300});
+            } else {
+                layer.options.interactive = false;
+            }
+        }
+
+        var landuse = new L.geoJson(landuse, {
+            onEachFeature: landuse_popups,
+            style: {
+                    color: '#FFFFFF',
+                    opacity: 0,
+                    weight: 2,
+                    fillColor: '#FFFFFF',
+                    fillOpacity: 0,
+            }
+        }).addTo(map);
+
+        // Buildings
+        var building_popups = function(feature, layer) {
+            if (feature.properties) {
+                var prop = feature.properties;
+                var popup = '<h3 style=\"line-height: 0.8\">' + ((prop['Name'] != null) ? prop['Name'] : ((prop['Type'] == 'station') ? 'Station' : 'Building')) + '</h3>'
+                    + ((prop['Number'] != null) ? '<hr>' + prop['Number'] + ' ' + prop['Street'] : '');
+                feature.layer = layer;
+                layer.bindPopup(popup, {maxWidth: 300});
+            }
+        }
+
+        var buildings = new L.geoJson(buildings, {
+            onEachFeature: building_popups,
+            style: {
+                    color: '#FFFFFF',
+                    opacity: 0,
+                    weight: 2,
+                    fillColor: '#FFFFFF',
+                    fillOpacity: 0,
+            }
+        }).addTo(map);
+
         // Roads
         function getRoadType(type) {
             switch (type) {
@@ -59,7 +108,10 @@
         var road_popups = function(feature, layer) {
             if (feature.properties) {
                 var prop = feature.properties;
-                var popup = ((prop['Name'] != null) ? '<h3>'+prop['Name']+'</h3>':'')+((prop['Route'] != null) ? '<b>Route '+prop['Route']+'</b><br>' : '')+'<b>Type: </b>'+getRoadType(prop['Type']);
+                var popup = ((prop['Name'] != null) ? '<h3 style=\"line-height: 0.8\">'+prop['Name']+'</h3><hr>':'')
+                    +((prop['Route'] != null) ? '<b>Route '+prop['Route']+'</b><br>' : '')
+                    +'<b>Type: </b>' + ((prop['Type'] != null) ? getRoadType(prop['Type']) : prop['Nonroad'])
+                    +((prop['One_Way'] != null) ? '<br><b>One-Way</b>':'');
                 feature.layer = layer;
                 layer.bindPopup(popup, {maxWidth: 300});
             }
@@ -70,9 +122,43 @@
             style: {
                     color: '#FFFFFF',
                     opacity: 0,
-                    weight: 10
+                    weight: 14
             }
         }).addTo(map);
+
+        // Transit Lines
+        function getTransitType(type) {
+            switch (type) {
+                case "CR": return "Commuter Rail";
+                default: return type;
+            }
+        }
+
+        var transit_popups = function(feature, layer) {
+            if (feature.properties && feature.properties['Type'] != 'Transfer') {
+                var prop = feature.properties;
+                var popup = ((prop['Route'] != null) ? '<h3 style=\"line-height: 0.8; color:' + prop['LineCol'] + '\">'
+                    + prop['Route']
+                    + ((prop['Route2'] != null) ? ', ' + prop['Route2'] : '')
+                    + ((prop['Route3'] != null) ? ', ' + prop['Route3'] : '')
+                    + '</h3><hr>' : '')
+                    + '<b>Type:</b> ' + getTransitType(prop['Type'])
+                    + ((prop['Abvground'] != null) ? ' (Elevated)': '');
+                feature.layer = layer;
+                layer.bindPopup(popup, {maxWidth: 300});
+            } else {
+                layer.options.interactive = false;
+            }
+        }
+
+        var transit_lines = new L.geoJson(transit_lines, {
+            onEachFeature: transit_popups,
+            style: {
+                    color: '#FFFFFF',
+                    opacity: 0,
+                    weight: 10
+            }
+        });
 
         // Stations
         function getLineType(type) {
@@ -87,11 +173,15 @@
         }
 
         var station_popups = function(feature, layer) {
-            if (feature.properties) {
+            if (feature.properties && feature.properties['Name'] != null) {
                 var prop = feature.properties;
-                var popup = ((prop['Name'] != null) ? '<h3>'+prop['Name']+'</h3>':'')+'<b>Type: </b>'+getLineType(prop['Type'])+((prop['Serves'] != null) ? '<br><b>Serves: </b>'+prop['Serves'] : '');
+                var popup = '<h3 style=\"line-height: 0.8\">'+prop['Name']+'</h3><hr>'
+                    + '<b>Type: </b>'+getLineType(prop['Type'])
+                    + ((prop['Serves'] != null) ? '<br><b>Serves: </b>'+prop['Serves'] : '');
                 feature.layer = layer;
                 layer.bindPopup(popup, {maxWidth: 300});
+            } else {
+                layer.options.interactive = false;
             }
         };
 
@@ -104,16 +194,28 @@
                     weight: 2,
                     fillColor: '#FFFFFF',
                     fillOpacity: 0,
-                    radius: 3
+                    radius: 5
                 });
             }
-        }).addTo(map);
+        });
 
         // LAYER CONTROL
         var basemaps = {
-            "Roads": base_tiles,
-            "Transit": transit_tiles
+            'Roads': base_tiles,
+            'Transit': transit_tiles
         };
+
+        map.on('baselayerchange', function(event) {
+            if (event.name == 'Roads') {
+                map.addLayer(roads);
+                map.removeLayer(transit_lines);
+                map.removeLayer(stations);
+            } else if (event.name == 'Transit') {
+                map.addLayer(transit_lines);
+                map.addLayer(stations);
+                map.removeLayer(roads);
+            }
+        });
 
         L.control.layers(basemaps).addTo(map);
         // How do I make the vector layers that are rendered dependent on which basemap is active?
