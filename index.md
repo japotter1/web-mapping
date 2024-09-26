@@ -1,6 +1,6 @@
 # Web Mapping Git Repository
 
-*Jada Potter - Updated 2/6/2024*
+*Jada Potter - Updated 9/26/2024*
 
 In this course, I learned how to create interactive web maps, mainly using the Leaflet library for JavaScript. Below are links to the final output of each week's assignment for this class. The full repository can be viewed [here](https://github.com/japotter1/web-mapping).
 
