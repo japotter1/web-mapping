@@ -6,22 +6,22 @@ In this course, I learned how to create interactive web maps, mainly using the L
 
 ---
 
-<button onclick="window.location.href='Lab1/Index.html'">Assignment 1 - Introductory Web Mapping</button>
+<button onclick="window.location.href='Lab1/index.html'">Assignment 1 - Introductory Web Mapping</button>
 <br>
-<button onclick="window.location.href='Lab2/Index.html'">Assignment 2 - Basic Interactivity with Leaflet</button>
+<button onclick="window.location.href='Lab2/index.html'">Assignment 2 - Basic Interactivity with Leaflet</button>
 <br>
-<button onclick="window.location.href='Lab3/Index.html'">Assignment 3 - Hosting Layers, Custom Base Maps</button>
+<button onclick="window.location.href='Lab3/index.html'">Assignment 3 - Hosting Layers, Custom Base Maps</button>
 <br>
-<button onclick="window.location.href='Lab4/Index.html'">Assignment 4 - ArcGIS Maps SDK for JavaScript</button>
+<button onclick="window.location.href='Lab4/index.html'">Assignment 4 - ArcGIS Maps SDK for JavaScript</button>
 <br>
-<button onclick="window.location.href='Lab5/Index.html'">Assignment 5 - User-Driven Dynamic Features</button>
+<button onclick="window.location.href='Lab5/index.html'">Assignment 5 - User-Driven Dynamic Features</button>
 <br>
-<button onclick="window.location.href='Lab6/Index.html'">Assignment 6 - Indexing, Searching with Fuse</button>
+<button onclick="window.location.href='Lab6/index.html'">Assignment 6 - Indexing, Searching with Fuse</button>
 <br>
-<button onclick="window.location.href='Lab7/Index.html'">Assignment 7 - Spatiotemporal Data</button>
+<button onclick="window.location.href='Lab7/index.html'">Assignment 7 - Spatiotemporal Data</button>
 <br>
-<button onclick="window.location.href='Lab8/Index.html'">Assignment 8 - Complex Applications</button>
+<button onclick="window.location.href='Lab8/index.html'">Assignment 8 - Complex Applications</button>
 <br>
-<button onclick="window.location.href='Final/Index.html'">Final Project - Transforming a Fictional Street Map into an Interactive Web Map</button>
+<button onclick="window.location.href='Final/index.html'">Final Project - Transforming a Fictional Street Map into an Interactive Web Map</button>
 <br>
 
